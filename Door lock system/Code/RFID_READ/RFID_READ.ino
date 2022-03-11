@@ -17,9 +17,10 @@ void loop() {
     if (!rfid.PICC_IsNewCardPresent())return;
     if (!rfid.PICC_ReadCardSerial())return;
 
-    Serial.print("New Card:{");
+    Serial.print('{');
     for (uint8_t i = 0; i < 4; i++) {
         Serial.print("0x");
+        if (rfid.uid.uidByte[i] < 0x10)Serial.print('0');
         Serial.print(rfid.uid.uidByte[i], HEX);
         if (i != 3)Serial.print(", ");
     }
