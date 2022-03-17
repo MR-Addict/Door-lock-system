@@ -53,7 +53,7 @@ void WIFI_Init() {
     Serial.print(ssid);
     // Connect to WIFI
     while (WiFi.status() != WL_CONNECTED) {
-        delay(500);
+        vTaskDelay(500 / portTICK_PERIOD_MS);
         Serial.print('.');
     }
     Serial.println();

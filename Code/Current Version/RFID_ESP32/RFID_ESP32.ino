@@ -74,9 +74,9 @@ void loop() {
 void ringBuzzer(uint8_t duration) {
     for (uint8_t i = 0; i < 2; i++) {
         digitalWrite(Buzzer, HIGH);
-        delay(duration);
+        vTaskDelay(duration / portTICK_PERIOD_MS);
         digitalWrite(Buzzer, LOW);
-        delay(100);
+        vTaskDelay(100 / portTICK_PERIOD_MS);
     }
 }
 
@@ -97,13 +97,13 @@ bool checkUID() {
 void openDoor() {
     ringBuzzer(100);
     stepper.runToNewPosition(stepsPerRevolution);
-    delay(1000);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
     stepper.runToNewPosition(0);
 }
 
 void readCard() {
     if (!isDetectedCard)return;
-    delay(300);
+    vTaskDelay(300 / portTICK_PERIOD_MS);
     if (!rfid.PICC_IsNewCardPresent())return;
     if (!rfid.PICC_ReadCardSerial())return;
 
