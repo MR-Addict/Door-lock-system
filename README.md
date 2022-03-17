@@ -2,9 +2,7 @@
 
 This NFC door lock system uses ESP32 and 28BYJ-48 stepper motors.
 
-## 1. Usage
-
-### 1.1 Add a new card
+## 1. Add a new card
 You can use `RFID_READ.ino` file to read a new card, the formate should be like this `{0xF1, 0x41, 0x01, 0x5F}`.
 
 Then add new card to `RFID.ino` file.
@@ -17,7 +15,7 @@ const uint8_t UID[][4] = {
 };
 ```
 
-### 1.2 Access RFID
+## 2. Access RFID
 
 In order to make this system more efficent, I add a sensor to interrupt MCU. So you may need to touch the sensor first.
 
