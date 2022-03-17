@@ -21,7 +21,7 @@ const uint8_t UID[][4] = {
 
 In order to make this system more efficent, I add a sensor to interrupt MCU. So you may need to touch the sensor first.
 
-Besides RFID card access, you can also access it use web UI.
+Besides RFID card access, you can also use web UI by [http://unlockdoor-507](http://unlockdoor-507) if you connect the same router.
 
 You need to login in first, the default username is `admin`, default password is `dinghao666`.
 
