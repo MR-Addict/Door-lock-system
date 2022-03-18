@@ -36,21 +36,35 @@ void notFound(AsyncWebServerRequest* request) {
     request->send(404, "text/plain", "Page Not found");
 }
 
+void WiFiStationDisconnected(WiFiEvent_t event, WiFiEventInfo_t info) {
+    // Reconnect
+    Serial.print("WiFi lost connection. Reason: ");
+    Serial.println(info.disconnected.reason);
+    Serial.println("Trying to Reconnect");
+    WiFi.begin(ssid, password);
+}
+
 void WIFI_Init() {
     // Init SPIFFS
     if (!SPIFFS.begin()) {
         Serial.println("An Error has occurred while mounting SPIFFS");
         return;
     }
+
     // change hostname to unlockdoor-507
     String hostname = "unlockdoor-507";
     WiFi.mode(WIFI_STA);
     WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, INADDR_NONE);
     WiFi.setHostname(hostname.c_str());
+
+    // Set WIFI disconnect event
+    WiFi.onEvent(WiFiStationDisconnected, SYSTEM_EVENT_STA_DISCONNECTED);
+
     // Set station mode
     WiFi.begin(ssid, password);
     Serial.print("Connecting to ");
     Serial.print(ssid);
+
     // Connect to WIFI
     while (WiFi.status() != WL_CONNECTED) {
         vTaskDelay(500 / portTICK_PERIOD_MS);
