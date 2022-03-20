@@ -67,7 +67,7 @@ void WIFI_Init() {
 
     // Connect to WIFI
     while (WiFi.status() != WL_CONNECTED) {
-        vTaskDelay(500 / portTICK_PERIOD_MS);
+        delay(500);
         Serial.print('.');
     }
     Serial.println();
