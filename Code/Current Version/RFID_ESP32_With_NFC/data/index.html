@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="shortcut icon" href="favicon.png" type="image/x-icon" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unlock Door 507</title>
+    <style>
+      div {
+        width: 20rem;
+        margin: auto;
+        background: #7be6dd;
+        padding: 1rem 0 3rem;
+        border-radius: 1rem;
+        box-shadow: 5px 5px 5px black;
+      }
+      button {
+        width: 7rem;
+        height: 7rem;
+        margin: 3rem 0;
+        border-radius: 50%;
+        font-size: 1.5rem;
+        font-weight: bold;
+        cursor: pointer;
+        border: none;
+        box-shadow: 5px 5px 5px black;
+      }
+      button:hover {
+        background: #48b960;
+      }
+      button:active {
+        background: #3e8e41;
+        box-shadow: 0 5px #666;
+        transform: translateY(4px);
+      }
+    </style>
+  </head>
+  <body align="center">
+    <div>
+      <h1>Unlock Door 507</h1>
+      <button type="button" onclick="openDoor()">Open</button>
+    </div>
+  </body>
+  <script>
+    function openDoor() {
+      const formData = new FormData();
+      const request = new XMLHttpRequest();
+      formData.append("Door", "Open");
+      request.open("POST", "/unlockdoor");
+      request.send(formData);
+    }
+  </script>
+</html>
