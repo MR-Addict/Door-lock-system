@@ -5,29 +5,53 @@
     <link rel="shortcut icon" href="favicon.png" type="image/x-icon" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Unlock Door 507</title>
+    <title>Unlockdoor</title>
     <style>
-      div {
+      html {
+        font-family: Arial, Helvetica, sans-serif;
+        display: inline-block;
+        text-align: center;
+      }
+      .container {
         width: 20rem;
+        margin: 0 auto;
+      }
+      .topnav h1 {
+        font-size: 1.6rem;
+        color: white;
+      }
+      .topnav {
+        overflow: hidden;
+        background-color: #0a1128;
+        margin: 0 auto 1rem;
+        border-radius: 0.5rem;
+      }
+      .card {
         margin: auto;
-        background: #7be6dd;
-        padding: 1rem 0 3rem;
-        border-radius: 1rem;
-        box-shadow: 5px 5px 5px black;
+        padding: 2rem;
+        height: 15rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: white;
+        box-shadow: 2px 2px 12px 1px rgba(140, 140, 140, 0.5);
+        border-radius: 0.5rem;
       }
       button {
         width: 7rem;
         height: 7rem;
-        margin: 3rem 0;
+        color: white;
         border-radius: 50%;
         font-size: 1.5rem;
         font-weight: bold;
         cursor: pointer;
         border: none;
-        box-shadow: 5px 5px 5px black;
+        background: #0a5397;
+        box-shadow: 2px 2px 12px 1px black;
       }
       button:hover {
-        background: #48b960;
+        background: #48b971;
       }
       button:active {
         background: #3e8e41;
@@ -36,10 +60,14 @@
       }
     </style>
   </head>
-  <body align="center">
-    <div>
-      <h1>Unlock Door 507</h1>
-      <button type="button" onclick="openDoor()">Open</button>
+  <body>
+    <div class="container">
+      <div class="topnav">
+        <h1>Unlockdoor</h1>
+      </div>
+      <div class="card">
+        <button type="button" onclick="openDoor()">开门</button>
+      </div>
     </div>
   </body>
   <script>
