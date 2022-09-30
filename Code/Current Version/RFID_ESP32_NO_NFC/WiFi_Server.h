@@ -1,3 +1,13 @@
+void setAP() {
+  // Disconnect WIFI first before set AP Mode
+  WiFi.disconnect();
+  // Configure AP
+  WiFi.mode(WIFI_AP);
+  WiFi.softAP("WiFi Manager", "123456789");
+  Serial.print("Access Point:");
+  Serial.println(WiFi.softAPIP());
+}
+
 void notFound(AsyncWebServerRequest* request) {
   request->send(404, "text/plain", "Page Not found");
 }
@@ -7,29 +17,22 @@ void WiFiStationDisconnected(WiFiEvent_t event, WiFiEventInfo_t info) {
   Serial.print("WiFi lost connection. Reason: ");
   Serial.println(info.disconnected.reason);
   Serial.println("Trying to Reconnect");
-  WiFi.begin(ssid.c_str(), password.c_str());
+  WiFi.begin(wifi.ssid.c_str(), wifi.pwd.c_str());
 }
 
-void WIFI_Init() {
-  // Init SPIFFS
-  if (!SPIFFS.begin()) {
-    Serial.println("An Error has occurred while mounting SPIFFS");
-    return;
-  }
-
-  // change hostname to unlockdoor-507
-  String hostname = "unlockdoor-507";
+void setSTA() {
+  // change hostname
   WiFi.mode(WIFI_STA);
   WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE, INADDR_NONE);
-  WiFi.setHostname(hostname.c_str());
+  WiFi.setHostname(wifi.hostname.c_str());
 
   // Set WIFI disconnect event
   WiFi.onEvent(WiFiStationDisconnected, SYSTEM_EVENT_STA_DISCONNECTED);
 
   // Set station mode
-  WiFi.begin(ssid.c_str(), password.c_str());
+  WiFi.begin(wifi.ssid.c_str(), wifi.pwd.c_str());
   Serial.print("Connecting to ");
-  Serial.print(ssid.c_str());
+  Serial.print(wifi.ssid.c_str());
 
   // Connect to WIFI
   while (WiFi.status() != WL_CONNECTED) {
@@ -43,25 +46,53 @@ void WIFI_Init() {
 void Server_Init() {
   // Home page
   server.on("/", [](AsyncWebServerRequest * request) {
-    // Get POST data
-    String user = "", pwd = "";
-    uint8_t params = request->params();
-    for (uint8_t i = 0; i < params; i++) {
-      AsyncWebParameter* p = request->getParam(i);
-      if (p->isPost()) {
-        if (strcmp(p->name().c_str(), "username") == 0) {
-          user = p->value().c_str();
-        } else if (strcmp(p->name().c_str(), "password") == 0) {
-          pwd = p->value().c_str();
+    if (!isAPMode) {
+      // Get POST data
+      String user = "", pwd = "";
+      uint8_t params = request->params();
+      for (uint8_t i = 0; i < params; i++) {
+        AsyncWebParameter* p = request->getParam(i);
+        if (p->isPost()) {
+          if (strcmp(p->name().c_str(), "username") == 0) {
+            user = p->value().c_str();
+          } else if (strcmp(p->name().c_str(), "password") == 0) {
+            pwd = p->value().c_str();
+          }
         }
       }
-    }
 
-    // check user and pwd
-    if (user == login_user && pwd == login_pwd) {
-      request->send(SPIFFS, "/index.html", "text/html");
+      // check user and pwd
+      if (user == wifi.login_user && pwd == wifi.login_pwd) {
+        request->send(SPIFFS, "/index.html", "text/html");
+      } else {
+        request->redirect("/login");
+      }
     } else {
-      request->redirect("/login");
+      // Get POST data
+      uint8_t params = request->params();
+      if (params) {
+        String wmssid, wmpwd, wmhostname, wmlogin_user, wmlogin_pwd;
+        for (uint8_t i = 0; i < params; i++) {
+          AsyncWebParameter* p = request->getParam(i);
+          if (strcmp(p->name().c_str(), "ssid") == 0) {
+            wmssid = p->value().c_str();
+          } else if (strcmp(p->name().c_str(), "pwd") == 0) {
+            wmpwd = p->value().c_str();
+          } else if (strcmp(p->name().c_str(), "hostname") == 0) {
+            wmhostname = p->value().c_str();
+          } else if (strcmp(p->name().c_str(), "login_user") == 0) {
+            wmlogin_user = p->value().c_str();
+          } else if (strcmp(p->name().c_str(), "login_pwd") == 0) {
+            wmlogin_pwd = p->value().c_str();
+          }
+        }
+        writeSPIFFS(wmssid, wmpwd, wmhostname, wmlogin_user, wmlogin_pwd);
+        request->send(200, "text/plain", "Configure Done. ESP restarting...");
+        // Restart ESP32
+        ESP.restart();
+      } else {
+        request->send(SPIFFS, "/manager.html", "text/html");
+      }
     }
   });
 
