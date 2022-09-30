@@ -101,6 +101,24 @@ void Server_Init() {
     request->send(SPIFFS, "/login.html", "text/html");
   });
 
+  server.on("/config", HTTP_GET, [](AsyncWebServerRequest * request) {
+    // Set the values in the document
+    StaticJsonDocument<200> doc;
+    doc["ssid"] = wifi.ssid;
+    doc["pwd"] = wifi.pwd;
+    doc["hostname"] = wifi.hostname;
+    doc["login_user"] = wifi.login_user;
+    doc["login_pwd"] = wifi.login_pwd;
+
+    // Serialize JSON
+    String output = "";
+    if (serializeJson(doc, output) == 0) {
+      Serial.println(F("Failed to write to file"));
+    } else {
+      request->send_P(200, "text/plain", output.c_str());
+    }
+  });
+
   server.on("/favicon.png", HTTP_GET, [](AsyncWebServerRequest * request) {
     request->send(SPIFFS, "/favicon.png", "image/png");
   });
